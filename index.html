@@ -201,6 +201,20 @@
             background: var(--btn-blue);
             color: white;
         }
+
+        /* TAMBAHAN STYLE UNTUK HALAMAN LOADING */
+        #loading-page {
+            display: none;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .loading-gif {
+            max-width: 250px;
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -275,6 +289,13 @@
         </div>
     </section>
 
+    <section id="loading-page">
+        <div class="container text-center">
+            <img src="loading.gif" class="loading-gif" alt="Memproses Data...">
+            <h5 class="fw-bold mt-3" style="color: var(--primary-navy);">Memproses Diagnosis Sistem Pakar...</h5>
+        </div>
+    </section>
+
     <section id="result-page">
         <div class="container">
             <div class="text-start mb-4" style="max-width: 750px; margin: 0 auto;">
@@ -304,6 +325,11 @@
                     </div>
                 </div>
             </div>
+
+            <div id="alert-rujukan" class="alert alert-danger text-center fw-medium shadow-sm" style="max-width: 750px; margin: 20px auto 0 auto; border-radius: 15px; display: none;">
+                segera periksakan anak anda ke rumah sakit/puskesmas terdekat. berikan penanganan terbaik untuk anak anda agar masa depan sikecil cerah
+            </div>
+
             <button type="button" class="btn btn-cek-lain" onclick="kembaliKeForm()">CEK ANAK LAIN</button>
         </div>
     </section>
@@ -322,6 +348,7 @@
         function kembaliKeForm() {
             document.getElementById('app-page').style.display = 'flex';
             document.getElementById('result-page').style.display = 'none';
+            document.getElementById('loading-page').style.display = 'none'; // Memastikan loading reset
             document.getElementById('stuntingForm').reset();
         }
 
@@ -381,10 +408,16 @@
                 cardHasil.className = "card-output-stunting shadow-sm text-center status-stunting-theme";
                 iconWrapper.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-danger"></i>';
                 txtStatusUtama.innerText = "Status: Terindikasi Stunting";
+                
+                /* KODE BARU: Menampilkan teks rujukan jika terindikasi stunting */
+                document.getElementById('alert-rujukan').style.display = 'block';
             } else {
                 cardHasil.className = "card-output-stunting shadow-sm text-center status-normal-theme";
                 iconWrapper.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>';
                 txtStatusUtama.innerText = "Status: Normal";
+
+                /* KODE BARU: Menyembunyikan kembali jika hasilnya normal pada pengecekan berikutnya */
+                document.getElementById('alert-rujukan').style.display = 'none';
             }
 
             document.getElementById('txt-persentase-riil').innerText = `${kalkulasiPersen}%`;
@@ -396,8 +429,14 @@
             document.getElementById('tbl-tb-gabung').innerText = `${tinggi} / ${nilaiMinus2SD_TB}`; 
             document.getElementById('tbl-bb-gabung').innerText = `${berat} / ${nilaiMinus2SD_BB}`; 
 
+            /* PERUBAHAN EFEK TIMEOUT LOADING 3 DETIK (3000ms) */
             document.getElementById('app-page').style.display = 'none';
-            document.getElementById('result-page').style.display = 'flex';
+            document.getElementById('loading-page').style.display = 'flex';
+
+            setTimeout(function() {
+                document.getElementById('loading-page').style.display = 'none';
+                document.getElementById('result-page').style.display = 'flex';
+            }, 3000); 
         }
     </script>
 </body>
