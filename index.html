@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pakar Stunting - Standar Resmi WHO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-navy: #004085;
+            --btn-blue: #0056b3;
+            --light-green: #f0fff4;
+        }
+
+        body { 
+            background: var(--light-green); 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        #landing-page { 
+            min-height: 100vh;
+            display: flex; 
+            align-items: center; 
+            padding: 40px 0; 
+        }
+        
+        .hero-title { 
+            font-size: 3.2rem; 
+            font-weight: 800; 
+            color: var(--primary-navy); 
+            line-height: 1.2;
+        }
+        
+        .btn-mulai { 
+            background: var(--btn-blue); 
+            color: white; 
+            padding: 18px 45px; 
+            border-radius: 50px; 
+            font-weight: bold; 
+            border: none; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            position: relative; 
+            margin-top: 15px;
+            margin-bottom: 20px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn-mulai:hover { 
+            transform: translateY(-3px); 
+            background-color: var(--primary-navy); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        /* UKURAN KONTAINER GAMBAR DI LAPTOP */
+        .hero-image-container {
+            display: inline-block;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+        }
+
+        .hero-image { 
+            width: 100%; 
+            height: auto; 
+            border-radius: 30px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+            display: block;
+            object-fit: cover;
+        }
+
+        /* GAYA TEKS BARU YANG SUDAH DIPINDAHKAN KE BAWAH GAMBAR */
+        .glass-overlay-text {
+            /* PERUBAHAN: Dibuat normal, tidak lagi absolut (melayang) */
+            position: relative;
+            margin-top: 25px; /* <--- Memberi jarak dari bawah gambar */
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 20px;
+            border-radius: 20px;
+            color: #2d3748;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            text-align: left; /* PERUBAHAN: Rata kiri agar lebih mudah dibaca di laptop */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            max-width: 400px; /* Samakan lebar dengan gambar di atas */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .glass-overlay-text strong {
+            color: #dc3545;
+        }
+
+        /* RESPONSIVITAS KHUSUS HP (MEDIA QUERY) */
+        @media (max-width: 768px) {
+            #landing-page {
+                padding: 30px 0;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+                text-align: center;
+            }
+            
+            #landing-page .text-start {
+                text-align: center !important;
+            }
+
+            /* UKURAN GAMBAR KHUSUS DI HP AGAR RINGAN & TIDAK PECAH */
+            .hero-image-container {
+                max-width: 280px; /* Dibatasi agar ramah memori HP */
+                margin-top: 25px;
+            }
+
+            .glass-overlay-text {
+                margin-top: 20px;
+                background: rgba(255, 255, 255, 0.95);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+                text-align: center; /* Di HP, teks dibuat rata tengah */
+                max-width: 280px; /* Samakan lebar dengan kontainer gambar HP */
+            }
+        }
+
+        #app-page, #result-page { display: none; padding: 50px 0; min-height: 100vh; }
+        .box-custom { background: white; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        .gender-option {
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .btn-check:checked + .gender-option {
+            border-color: var(--btn-blue);
+            background-color: #e7f1ff;
+            color: var(--btn-blue);
+            font-weight: bold;
+        }
+
+        .card-output-stunting {
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 750px;
+            margin: 0 auto;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+        
+        .status-stunting-theme {
+            background-color: #fce8e6 !important;
+            border-color: #f5c2c7 !important;
+            color: #a94442 !important;
+        }
+        .status-stunting-theme .text-percentage { color: #dc3545; }
+        .status-stunting-theme .status-title { color: #dc3545; }
+
+        .status-normal-theme {
+            background-color: #e6f4ea !important;
+            border-color: #badbcc !important;
+            color: #275937 !important;
+        }
+        .status-normal-theme .text-percentage { color: #198754; }
+        .status-normal-theme .status-title { color: #198754; }
+
+        .status-icon { font-size: 4.5rem; margin-bottom: 15px; }
+        .status-title { font-size: 2.2rem; font-weight: 700; }
+        .text-percentage { font-size: 3.5rem; font-weight: 850; margin: 10px 0; }
+        
+        .table-output th, .table-output td {
+            padding: 12px 15px;
+            font-size: 1.1rem;
+        }
+        
+        .btn-cek-lain {
+            border: 2px solid var(--btn-blue);
+            color: var(--btn-blue);
+            background: white;
+            padding: 14px;
+            font-weight: bold;
+            border-radius: 50px;
+            width: 100%;
+            max-width: 750px;
+            margin: 25px auto 0 auto;
+            display: block;
+            transition: 0.3s;
+        }
+        .btn-cek-lain:hover {
+            background: var(--btn-blue);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <section id="landing-page">
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-12 col-lg-6 text-start">
+                    <h1 class="hero-title">Cegah Stunting Sejak Dini untuk Masa Depan Gemilang</h1>
+                    <p class="lead mb-4">Deteksi cepat tumbuh kembang anak usia 1-24 bulan berdasarkan standar WHO terbaru.</p>
+                    <button type="button" class="btn btn-mulai" onclick="mulaiAnalisis()">
+                        Mulai Cek Sekarang <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+                <div class="col-12 col-lg-6 text-center d-flex flex-column align-items-center">
+                    <div class="hero-image-container">
+                        <img src="bunda.jpeg" alt="Pencegahan Stunting" class="hero-image" onerror="this.onerror=null; this.src='https://placehold.co/450x450?text=Gambar+Bunda+Belum+Upload';">
+                    </div>
+                    
+                    <div class="glass-overlay-text">
+                        <strong>Stunting bisa dicegah jika kita tidak abai!</strong> Ayah dan Ibu, mari lebih jeli memantau berat dan tinggi badan si kecil setiap bulan. Luangkan waktu untuk memastikan tumbuh kembangnya berjalan optimal, karena setiap detik perhatian kita sangat berarti untuk masa depan mereka.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="app-page">
+        <div class="container">
+            <div class="box-custom p-4 p-md-5 mx-auto" style="max-width: 800px;">
+                <button type="button" class="btn btn-sm btn-light mb-4" onclick="kembaliKeHome()">← Kembali</button>
+                
+                <form id="stuntingForm">
+                    <div id="step-1-content">
+                        <h4 class="fw-bold mb-4">Input Data Anak</h4>
+                        <div class="row g-4 text-start">
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Nama Lengkap Anak</label>
+                                <input type="text" id="nama" class="form-control form-control-lg bg-light" placeholder="Masukkan nama" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Usia (1-24 Bulan)</label>
+                                <input type="number" id="usia" class="form-control form-control-lg bg-light" placeholder="Bulan" min="1" max="24" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Jenis Kelamin</label>
+                                <div class="d-flex gap-2">
+                                    <input type="radio" class="btn-check" name="gender" id="gender-l" value="L" required>
+                                    <label class="gender-option" for="gender-l">Laki-laki</label>
+                                    
+                                    <input type="radio" class="btn-check" name="gender" id="gender-p" value="P" required>
+                                    <label class="gender-option" for="gender-p">Perempuan</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Berat Badan (kg)</label>
+                                <input type="number" step="0.1" id="berat" class="form-control form-control-lg bg-light" placeholder="Contoh: 9.2" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Tinggi Badan (cm)</label>
+                                <input type="number" step="0.1" id="tinggi" class="form-control form-control-lg bg-light" placeholder="Contoh: 75.5" required>
+                            </div>
+                            <div class="col-12 text-center mt-4">
+                                <button type="button" class="btn btn-primary btn-lg w-100 rounded-pill" style="background-color: var(--btn-blue);" onclick="hitungStunting()">
+                                    LIHAT HASIL DIAGNOSIS <i class="fa-solid fa-square-poll-vertical ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="result-page">
+        <div class="container">
+            <div class="text-start mb-4" style="max-width: 750px; margin: 0 auto;">
+                <button type="button" class="btn btn-sm btn-light" onclick="kembaliKeForm()">← Kembali</button>
+            </div>
+            
+            <div id="card-hasil-skripsi" class="card-output-stunting shadow-sm text-center">
+                <div id="wrapper-icon-hasil" class="status-icon"></div>
+                <div class="status-title" id="txt-status-utama">Status: Memproses...</div>
+                <div class="text-percentage" id="txt-persentase-riil">0.0%</div>
+                <p class="lead fs-6 my-3 px-3" id="txt-kalimat-deskripsi">
+                    Tinggi badan <strong id="lbl-nama-tengah">-</strong> mencapai <span id="lbl-persen-tengah">0.0%</span> dari standar rata-rata WHO.
+                </p>
+                <hr class="my-4 opacity-25" style="border-color: currentColor;">
+                <div class="row text-start px-2">
+                    <div class="col-6">
+                        <table class="table table-borderless m-0 table-output" style="color: inherit;">
+                            <tr><td><strong>Nama:</strong><br><span id="tbl-nama">-</span></td></tr>
+                            <tr><td><strong>TB / Batas Min:</strong><br><span id="tbl-tb-gabung">-</span> cm</td></tr>
+                        </table>
+                    </div>
+                    <div class="col-6">
+                        <table class="table table-borderless m-0 table-output" style="color: inherit;">
+                            <tr><td><strong>Usia:</strong><br><span id="tbl-usia">-</span> Bulan</td></tr>
+                            <tr><td><strong>BB / Batas Min:</strong><br><span id="tbl-bb-gabung">-</span> kg</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-cek-lain" onclick="kembaliKeForm()">CEK ANAK LAIN</button>
+        </div>
+    </section>
+
+    <script>
+        function mulaiAnalisis() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('app-page').style.display = 'flex';
+        }
+
+        function kembaliKeHome() {
+            document.getElementById('landing-page').style.display = 'flex';
+            document.getElementById('app-page').style.display = 'none';
+        }
+
+        function kembaliKeForm() {
+            document.getElementById('app-page').style.display = 'flex';
+            document.getElementById('result-page').style.display = 'none';
+            document.getElementById('stuntingForm').reset();
+        }
+
+        function hitungStunting() {
+            const nama = document.getElementById('nama').value;
+            const usiaInput = document.getElementById('usia').value;
+            const gender = document.querySelector('input[name="gender"]:checked')?.value;
+            const beratInput = document.getElementById('berat').value;
+            const tinggiInput = document.getElementById('tinggi').value;
+
+            if (!nama || !usiaInput || !gender || !beratInput || !tinggiInput) {
+                alert("Mohon lengkapi seluruh data form anak!");
+                return;
+            }
+
+            const usia = parseInt(usiaInput);
+            const berat = parseFloat(beratInput);
+            const tinggi = parseFloat(tinggiInput);
+
+            const dataWHO_TBU = {
+                'L': {
+                    1: [52.8, 54.7],   2: [54.4, 56.4],   3: [57.3, 59.4],   4: [59.7, 61.8],
+                    5: [61.7, 63.8],   6: [63.3, 65.5],   7: [64.8, 67.0],   8: [66.2, 68.4],
+                    9: [67.5, 69.7],   10: [68.7, 71.0],  11: [69.9, 72.2],  12: [71.0, 73.4],
+                    13: [72.1, 74.5],  14: [73.1, 75.6],  15: [74.1, 76.6],  16: [75.0, 77.6],
+                    17: [76.0, 78.6],  18: [76.9, 79.6],  19: [77.7, 80.5],  20: [78.6, 81.4],
+                    21: [79.4, 82.3],  22: [80.2, 83.1],  23: [81.0, 83.9],  24: [81.7, 84.8]
+                },
+                'P': {
+                    1: [51.8, 53.7],   2: [53.2, 55.0],   3: [53.5, 57.7],   4: [57.8, 59.9],
+                    5: [59.6, 61.8],   6: [61.2, 63.5],   7: [62.7, 65.1],   8: [64.0, 66.5],
+                    9: [65.3, 67.8],   10: [66.5, 69.0],  11: [67.7, 70.3],  12: [68.9, 71.4],
+                    13: [70.0, 72.6],  14: [71.0, 73.7],  15: [72.0, 74.8],  16: [73.0, 75.8],
+                    17: [74.0, 76.8],  18: [74.9, 77.8],  19: [75.8, 78.8],  20: [76.7, 79.7],
+                    21: [77.5, 80.6],  22: [78.4, 81.5],  23: [79.2, 82.3],  24: [80.0, 83.2]
+                }
+            };
+
+            const dataWHO_BBU = {
+                'L': { 1: 3.9, 2: 4.9, 3: 5.7, 4: 6.2, 5: 6.7, 6: 7.1, 7: 7.4, 8: 7.7, 9: 8.0, 10: 8.2, 11: 8.4, 12: 8.6, 13: 8.8, 14: 9.0, 15: 9.2, 16: 9.4, 17: 9.6, 18: 9.8, 19: 10.0, 20: 10.1, 21: 10.3, 22: 10.5, 23: 10.6, 24: 10.8 },
+                'P': { 1: 3.6, 2: 4.5, 3: 5.2, 4: 5.7, 5: 6.1, 6: 6.4, 7: 6.7, 8: 6.9, 9: 7.1, 10: 7.4, 11: 7.6, 12: 7.7, 13: 7.9, 14: 8.1, 15: 8.3, 16: 8.4, 17: 8.6, 18: 8.8, 19: 8.9, 20: 9.1, 21: 9.2, 22: 9.4, 23: 9.5, 24: 9.7 }
+            };
+
+            const batasSD_Tinggi = dataWHO_TBU[gender][usia];
+            const nilaiMinus2SD_TB = batasSD_Tinggi[0];
+            const nilaiMedianWHO_TB = batasSD_Tinggi[1];
+            const nilaiMinus2SD_BB = dataWHO_BBU[gender][usia];
+
+            let hitungPersen = (tinggi / nilaiMedianWHO_TB) * 100;
+            const kalkulasiPersen = Math.min(hitungPersen, 100).toFixed(1);
+
+            const cardHasil = document.getElementById('card-hasil-skripsi');
+            const iconWrapper = document.getElementById('wrapper-icon-hasil');
+            const txtStatusUtama = document.getElementById('txt-status-utama');
+
+            if (tinggi < nilaiMinus2SD_TB) {
+                cardHasil.className = "card-output-stunting shadow-sm text-center status-stunting-theme";
+                iconWrapper.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-danger"></i>';
+                txtStatusUtama.innerText = "Status: Terindikasi Stunting";
+            } else {
+                cardHasil.className = "card-output-stunting shadow-sm text-center status-normal-theme";
+                iconWrapper.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>';
+                txtStatusUtama.innerText = "Status: Normal";
+            }
+
+            document.getElementById('txt-persentase-riil').innerText = `${kalkulasiPersen}%`;
+            document.getElementById('lbl-nama-tengah').innerText = nama;
+            document.getElementById('lbl-persen-tengah').innerText = `${kalkulasiPersen}%`;
+
+            document.getElementById('tbl-nama').innerText = nama;
+            document.getElementById('tbl-usia').innerText = usia;
+            document.getElementById('tbl-tb-gabung').innerText = `${tinggi} / ${nilaiMinus2SD_TB}`; 
+            document.getElementById('tbl-bb-gabung').innerText = `${berat} / ${nilaiMinus2SD_BB}`; 
+
+            document.getElementById('app-page').style.display = 'none';
+            document.getElementById('result-page').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
